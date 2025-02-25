@@ -1,0 +1,32 @@
+name: Run Torrent Download and Upload
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  run-torrent:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'  # 使用与 libtorrent 兼容的 Python 版本
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-libtorrent
+          pip install huggingface_hub
+
+      - name: Run script
+        env:
+          HUGGINGFACE_TOKEN: ${{ secrets.huggingface }}
+        run: |
+          python3 ./run.py
